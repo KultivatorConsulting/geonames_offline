@@ -14,7 +14,9 @@ Usage: dart run geonames_offline:generate [options]
                            the same format (required)
   --admin1 <file>          admin1CodesASCII.txt (required)
   --country-info <file>    countryInfo.txt (required)
-  --output <file>          where to write the dataset (required)
+  --output <file>          where to write the binary dataset
+  --dart <file>            where to write a Dart library embedding the dataset
+                           (at least one of --output and --dart is required)
   --countries NZ,AU        keep only these ISO 3166-1 alpha-2 countries
   --dataset-version <s>    override the derived dataset version string
   --help                   show this text
@@ -46,10 +48,13 @@ void main(List<String> args) {
     if (!_known.contains(name)) return _usageError('Unknown option --$name');
     options[name] = value;
   }
-  for (final required in ['cities', 'admin1', 'country-info', 'output']) {
+  for (final required in ['cities', 'admin1', 'country-info']) {
     if (!options.containsKey(required)) {
       return _usageError('--$required is required');
     }
+  }
+  if (!options.containsKey('output') && !options.containsKey('dart')) {
+    return _usageError('At least one of --output and --dart is required');
   }
 
   final citiesPath = options['cities']!;
@@ -67,13 +72,27 @@ void main(List<String> args) {
       countries: countries,
       datasetVersion: options['dataset-version'],
     );
-    final output = File(options['output']!);
-    output.parent.createSync(recursive: true);
-    output.writeAsBytesSync(result.bytes);
-    stdout.writeln(
-      'Wrote ${output.path}: ${result.bytes.length} bytes, '
-      '${result.placeCount} places, version "${result.datasetVersion}"',
-    );
+    final summary =
+        '${result.bytes.length} bytes, ${result.placeCount} places, '
+        'version "${result.datasetVersion}"';
+    if (options['output'] case final path?) {
+      final output = File(path);
+      output.parent.createSync(recursive: true);
+      output.writeAsBytesSync(result.bytes);
+      stdout.writeln('Wrote $path: $summary');
+    }
+    if (options['dart'] case final path?) {
+      final output = File(path);
+      output.parent.createSync(recursive: true);
+      output.writeAsStringSync(
+        renderEmbeddedDart(
+          bytes: result.bytes,
+          sourceName: _basenameWithoutExtension(citiesPath),
+          datasetVersion: result.datasetVersion,
+        ),
+      );
+      stdout.writeln('Wrote $path: embedded Dart, $summary');
+    }
   } on FileSystemException catch (e) {
     stderr.writeln('${e.message}: ${e.path}');
     exitCode = 66;
@@ -88,6 +107,7 @@ const _known = {
   'admin1',
   'country-info',
   'output',
+  'dart',
   'countries',
   'dataset-version',
 };

@@ -3,8 +3,7 @@
 // shipped bytes decode, look like the export they were built from, and hold
 // the index invariant at full scale.
 
-import 'dart:io';
-
+import 'package:geonames_offline/src/data/cities15000.dart';
 import 'package:geonames_offline/src/format.dart';
 import 'package:test/test.dart';
 
@@ -13,7 +12,7 @@ import 'support/spatial_order.dart';
 void main() {
   late final DecodedDataset d;
   setUpAll(() {
-    d = decodeDataset(File('lib/data/cities15000.gnof').readAsBytesSync());
+    d = decodeDataset(cities15000DatasetBytes());
   });
 
   test('decodes to the expected shape and carries its obligations', () {

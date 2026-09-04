@@ -11,31 +11,40 @@ the device. Everything about its shape follows from that constraint: if a
 change would need a network call to resolve a coordinate, it is wrong for this
 package no matter how much more accurate it would be.
 
-## Status
-
-**Not yet usable for lookups.** Tag `v0.1.0-api` ships the `ReverseGeocoder`
-interface and its value types, `GeoPlace` and `NearestPlace`, so that a
-consumer can compile against the contract, and stub it, while the
-implementation is built. `main` also has the generator, the dataset format and
-the prebuilt `cities15000` dataset. The resolver that answers queries is next.
-
-## The contract
+## Usage
 
 ```dart
 import 'package:geonames_offline/geonames_offline.dart';
 
-void describe(ReverseGeocoder geocoder, double latitude, double longitude) {
-  final nearest = geocoder.nearest(latitude, longitude);
-  if (nearest == null) return; // the dataset holds nothing at all
+void main() {
+  final geocoder = GeonamesReverseGeocoder.cities15000();
+
+  final nearest = geocoder.nearest(-41.29, 174.78);
+  if (nearest == null) return; // only an empty dataset answers null
 
   // No radius policy is applied for you: decide what is too far yourself.
   if (nearest.distanceMetres > 80000) return;
 
   final place = nearest.place;
   print('${place.name}, ${place.admin1Name}, ${place.countryName}');
+  // Wellington, Wellington Region, New Zealand
+  print('${nearest.distanceMetres.round()} m away'); // 490 m away
   print(geocoder.attribution); // CC BY 4.0: show this to your users
 }
 ```
+
+`GeonamesReverseGeocoder.cities15000()` loads the bundled dataset, which is
+embedded in the package as a Dart constant: no asset declaration, no file I/O,
+and it works the same on Flutter, the Dart VM, ahead-of-time compiled
+executables and the web. Loading takes about ten milliseconds ahead-of-time
+compiled and holds around 34,000 places in memory; do it once and share the
+instance. `GeonamesReverseGeocoder.fromBytes` loads a dataset you built
+yourself, from wherever you keep it.
+
+`ReverseGeocoder` is the interface. Code against it, and substitute a stub in
+tests.
+
+## The contract
 
 The design choices behind the shape, and the reasoning for each, are in
 [DESIGN.md](DESIGN.md). In brief:
@@ -51,7 +60,13 @@ The design choices behind the shape, and the reasoning for each, are in
   GeoNames' own values. What a first-order division is varies by country, and
   no universal vocabulary would be right everywhere.
 - **Not-found is `null`, not an exception.** A coordinate with no match and an
-  id that is not present are ordinary outcomes.
+  id that is not present are ordinary outcomes. A coordinate that is not a
+  coordinate, `NaN` or a latitude beyond ±90, is a programming error and
+  throws `ArgumentError`. Any longitude is accepted and wrapped into ±180.
+- **Ties are deterministic.** Two places exactly equidistant from the query
+  resolve to the lower `geonameId`, so the answer is a pure function of the
+  query and the dataset.
+- **Distances are great-circle metres** on a sphere of radius 6,371,008.8 m.
 - **`byId` never substitutes a nearest match.** GeoNames retires, merges and
   splits entries between releases, so a stored `geonameId` will eventually
   dangle. `byId` returns `null` for it, so that the consumer can detect the
@@ -64,15 +79,18 @@ The design choices behind the shape, and the reasoning for each, are in
 ## Installing
 
 Until the package is published to pub.dev, depend on this repository directly
-from git, pinned to the tag:
+from git, pinned to a tag:
 
 ```yaml
 dependencies:
   geonames_offline:
     git:
       url: https://github.com/KultivatorConsulting/geonames_offline.git
-      ref: v0.1.0-api
+      ref: v0.1.0
 ```
+
+Tag `v0.1.0-api` is the interface alone, with no implementation, for
+consumers who need to compile against the contract before adopting the data.
 
 ## Datasets
 
@@ -80,7 +98,7 @@ Two sizes, both from the GeoNames exports:
 
 | Dataset        | Rows  | Size    | Notes                                                    |
 | -------------- | ----- | ------- | -------------------------------------------------------- |
-| `cities15000`  | ~34k  | 1.1 MB  | Ships prebuilt at `lib/data/cities15000.gnof`. Population 15,000+. |
+| `cities15000`  | ~34k  | 1.1 MB  | Bundled; `GeonamesReverseGeocoder.cities15000()`. Population 15,000+. |
 | `cities1000`   | ~150k | ~5 MB   | Build it with the generator. Better rural accuracy.      |
 
 The generator also accepts a country filter, so a consumer shipping to one
@@ -95,8 +113,15 @@ dart run geonames_offline:generate \
   --admin1 build/geonames/admin1CodesASCII.txt \
   --country-info build/geonames/countryInfo.txt \
   --countries NZ,AU \
-  --output assets/places.gnof
+  --output assets/places.gnof \
+  --dart lib/places_dataset.dart
 ```
+
+`--output` writes the binary dataset, to load with
+`GeonamesReverseGeocoder.fromBytes` from an asset or a file. `--dart` writes
+a Dart library that embeds the same bytes and exposes them as a function, the
+way the bundled dataset ships, so that nothing has to be loaded at all. Use
+either or both.
 
 The output is deterministic: the same export produces the same bytes, on any
 machine. Its `datasetVersion` is derived from the export's content, for

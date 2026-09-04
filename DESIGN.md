@@ -123,6 +123,8 @@ package's obligation; deciding what to do about it is the consumer's.
 
 A compact binary asset, loaded and queried through an **in-memory spatial index**
 (a k-d tree over the coordinates is sufficient and is what the prior art used).
+Distances are great-circle metres on a sphere of radius 6,371,008.8 m, the
+IUGG mean Earth radius.
 
 **Not SQLite.** `sqflite` is Flutter-bound, which would break the pure-Dart
 constraint outright; `sqlite3` via FFI drags in per-platform native libraries and
@@ -151,6 +153,27 @@ FORMAT.md is the specification. The points that were open:
 Measured on the 2026-09-03 export: 34,135 places encode to 1.11 MB (0.71 MB
 gzipped), generation takes under a second, and decoding takes about 5 ms
 ahead-of-time compiled or 25 ms on a cold JIT.
+
+### Decided: the bundled dataset is a Dart constant
+
+A pure-Dart package has no portable way to read a file of its own at runtime:
+Flutter needs an asset declaration in the consuming app, a server needs
+package-URI resolution, an ahead-of-time compiled executable has neither, and
+the web has none of the above. So the generator can also emit the dataset as
+a Dart library holding it base64-encoded in a `const String`, and that is how
+`cities15000` ships (`lib/src/data/cities15000.dart`, 1.48 MB of source).
+`GeonamesReverseGeocoder.cities15000()` decodes it on demand; a consumer that
+never calls it gets it tree-shaken away. The raw binary is not shipped as
+well, since that would double the package for no reader.
+
+### Decided: invalid coordinates throw, ties go to the lower id
+
+`NaN`, infinities and a latitude beyond ±90 are programming errors and throw
+`ArgumentError`; `null` stays reserved for "nothing to find". Any finite
+longitude is accepted and wrapped into ±180, because callers holding
+longitudes in `[0, 360)` are common and there is exactly one right answer.
+Two places exactly equidistant from a query resolve to the lower `geonameId`,
+so a result never depends on insertion order.
 
 ## Datasets
 

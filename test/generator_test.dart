@@ -53,7 +53,7 @@ void main() {
         sourceName: 'cities_fixture',
       ).bytes,
     );
-    expect(d.length, 11);
+    expect(d.length, 13);
     final byId = {for (var i = 0; i < d.length; i++) d.geonameIds[i]: i};
 
     final wellington = d.placeAt(byId[2179537]!);
@@ -82,7 +82,7 @@ void main() {
   });
 
   test('the dataset version is derived from the content', () {
-    expect(_generate().datasetVersion, 'cities_fixture 2025-06-10 (11 places)');
+    expect(_generate().datasetVersion, 'cities_fixture 2025-06-10 (13 places)');
     expect(
       _generate(countries: {'nz'}).datasetVersion,
       'cities_fixture NZ 2025-06-10 (3 places)',
@@ -153,6 +153,8 @@ void main() {
           90000006,
           90000007,
           6691831,
+          90000008,
+          90000009,
         ]),
       ),
       reason: 'input order is not spatial order, so ordering must have run',
@@ -167,7 +169,7 @@ void main() {
         isA<FormatException>().having(
           (e) => e.message,
           'message',
-          contains('line 12'),
+          contains('line 14'),
         ),
       ),
     );
@@ -207,45 +209,37 @@ void main() {
     setUp(() => temp = Directory.systemTemp.createTempSync('gnof_cli'));
     tearDown(() => temp.deleteSync(recursive: true));
 
-    test(
-      'writes a dataset and reports it',
-      () {
-        final out = '${temp.path}/nz.gnof';
-        final result = Process.runSync(Platform.resolvedExecutable, [
-          'run',
-          'bin/generate.dart',
-          '--cities=$_dir/cities_fixture.txt',
-          '--admin1',
-          '$_dir/admin1CodesASCII.txt',
-          '--country-info',
-          '$_dir/countryInfo.txt',
-          '--countries',
-          'nz',
-          '--output',
-          out,
-        ]);
-        expect(result.exitCode, 0, reason: '${result.stdout}${result.stderr}');
-        expect(result.stdout, contains('3 places'));
-        expect(result.stdout, contains('cities_fixture NZ 2025-06-10'));
-        final d = decodeDataset(File(out).readAsBytesSync());
-        expect(d.geonameIds, unorderedEquals([2179537, 2193733, 90000004]));
-      },
-      timeout: const Timeout(Duration(minutes: 2)),
-    );
+    test('writes a dataset and reports it', () {
+      final out = '${temp.path}/nz.gnof';
+      final result = Process.runSync(Platform.resolvedExecutable, [
+        'run',
+        'bin/generate.dart',
+        '--cities=$_dir/cities_fixture.txt',
+        '--admin1',
+        '$_dir/admin1CodesASCII.txt',
+        '--country-info',
+        '$_dir/countryInfo.txt',
+        '--countries',
+        'nz',
+        '--output',
+        out,
+      ]);
+      expect(result.exitCode, 0, reason: '${result.stdout}${result.stderr}');
+      expect(result.stdout, contains('3 places'));
+      expect(result.stdout, contains('cities_fixture NZ 2025-06-10'));
+      final d = decodeDataset(File(out).readAsBytesSync());
+      expect(d.geonameIds, unorderedEquals([2179537, 2193733, 90000004]));
+    }, timeout: const Timeout(Duration(minutes: 2)));
 
-    test(
-      'rejects missing options with the usage exit code',
-      () {
-        final result = Process.runSync(Platform.resolvedExecutable, [
-          'run',
-          'bin/generate.dart',
-          '--cities',
-          '$_dir/cities_fixture.txt',
-        ]);
-        expect(result.exitCode, 64);
-        expect(result.stderr, contains('--admin1 is required'));
-      },
-      timeout: const Timeout(Duration(minutes: 2)),
-    );
+    test('rejects missing options with the usage exit code', () {
+      final result = Process.runSync(Platform.resolvedExecutable, [
+        'run',
+        'bin/generate.dart',
+        '--cities',
+        '$_dir/cities_fixture.txt',
+      ]);
+      expect(result.exitCode, 64);
+      expect(result.stderr, contains('--admin1 is required'));
+    }, timeout: const Timeout(Duration(minutes: 2)));
   });
 }

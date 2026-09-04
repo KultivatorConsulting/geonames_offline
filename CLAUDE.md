@@ -52,7 +52,10 @@ answer is "nothing plausible", the test is decoration.
   and one they skim past.
 - Formatting: `dart format` is the ecosystem norm and pub.dev scores compliance.
   Apply it to files you are already changing; do not reformat the repository
-  wholesale inside a change that is about something else.
+  wholesale inside a change that is about something else. CI checks formatting
+  with the **latest stable** Dart, as pub.dev does, and its output changes
+  between releases; a Flutter-bundled SDK usually lags, so format with a
+  standalone SDK that matches CI when they differ.
 - This repository's tracker is GitHub issues. Do not reference any other tracker
   in committed files.
 

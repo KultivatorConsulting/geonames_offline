@@ -1,5 +1,17 @@
-## Unreleased
+## 0.1.0
 
+The first working release.
+
+- `GeonamesReverseGeocoder`, the resolver: `nearest` through an implicit k-d
+  tree over unit vectors on the sphere, `byId`, `datasetVersion` and
+  `attribution`. Invalid coordinates throw `ArgumentError`; any longitude is
+  wrapped into ±180; exact ties resolve to the lower `geonameId`.
+- `GeonamesReverseGeocoder.cities15000()`, the bundled dataset, embedded as a
+  Dart constant so it loads anywhere Dart runs with no asset pipeline.
+- The adversarial corpus from TESTING.md: duplicate names across countries,
+  rural points, exact ties, the antimeridian, the poles, open ocean, retired
+  identifiers, the empty dataset and invalid coordinates, all asserting on
+  `geonameId` against a purpose-built fixture.
 - The generator, `dart run geonames_offline:generate`, which turns a GeoNames
   export into a dataset deterministically, with an optional country filter,
   a content-derived dataset version and the CC BY attribution stamped in.

@@ -1,13 +1,18 @@
 // Measures how long a dataset takes to decode, cold (first call, JIT still
-// compiling) and warm. Usage: dart run tool/bench_load.dart [dataset]
+// compiling) and warm. Usage: dart run tool/bench_load.dart [dataset.gnof]
+// With no argument it measures the bundled dataset, including its base64
+// decoding.
 
 import 'dart:io';
 
+import 'package:geonames_offline/src/data/cities15000.dart';
 import 'package:geonames_offline/src/format.dart';
 
 void main(List<String> args) {
-  final path = args.isNotEmpty ? args.first : 'lib/data/cities15000.gnof';
-  final bytes = File(path).readAsBytesSync();
+  final path = args.isNotEmpty ? args.first : 'bundled cities15000';
+  final bytes = args.isNotEmpty
+      ? File(args.first).readAsBytesSync()
+      : cities15000DatasetBytes();
   final watch = Stopwatch()..start();
   var d = decodeDataset(bytes);
   final cold = watch.elapsedMicroseconds;

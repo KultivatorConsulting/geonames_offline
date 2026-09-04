@@ -83,9 +83,19 @@ double cosRad(double x) {
 
 /// The unit vector of a position on the sphere, from coordinates in 1e-7
 /// degrees. `z` points to the north pole; `x` to latitude 0, longitude 0.
-({double x, double y, double z}) unitVectorE7(int latE7, int lonE7) {
-  final lat = latE7 * radiansPerE7;
-  final lon = lonE7 * radiansPerE7;
-  final cosLat = cosRad(lat);
-  return (x: cosLat * cosRad(lon), y: cosLat * sinRad(lon), z: sinRad(lat));
+({double x, double y, double z}) unitVectorE7(int latE7, int lonE7) =>
+    unitVectorRad(latE7 * radiansPerE7, lonE7 * radiansPerE7);
+
+/// The unit vector of a position on the sphere, from coordinates in radians
+/// with `|latitude| <= pi/2` and `|longitude| <= pi`.
+({double x, double y, double z}) unitVectorRad(
+  double latitude,
+  double longitude,
+) {
+  final cosLat = cosRad(latitude);
+  return (
+    x: cosLat * cosRad(longitude),
+    y: cosLat * sinRad(longitude),
+    z: sinRad(latitude),
+  );
 }

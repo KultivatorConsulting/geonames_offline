@@ -9,3 +9,5 @@
 90000006	Ushuaia	Ushuaia		-54.81084	-68.31591	P	PPLA2	AR		23				58028		20	America/Argentina/Ushuaia	2024-07-07
 90000007	Nowhere	Nowhere		10.0	10.0	P	PPL	NG		00				16000		300	Africa/Lagos	2021-01-01
 6691831	Vatican City	Vatican City	Città del Vaticano	41.90268	12.45414	P	PPLC	VA						825		61	Europe/Vatican	2023-12-01
+90000008	Twin West	Twin West		0.0	-1.0	P	PPL	NG		00				20000		5	Africa/Lagos	2020-01-01
+90000009	Twin East	Twin East		0.0	1.0	P	PPL	NG		00				20000		5	Africa/Lagos	2020-01-01
