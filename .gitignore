@@ -1,0 +1,17 @@
+# Local working material, not part of the package
+HANDOVER.md
+
+# Dart / pub
+.dart_tool/
+.packages
+build/
+pubspec.lock
+doc/api/
+
+# Editors
+.idea/
+.vscode/
+*.iml
+
+# OS
+.DS_Store

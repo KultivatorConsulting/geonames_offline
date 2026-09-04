@@ -1,0 +1,20 @@
+Data licence
+============
+
+Datasets distributed with this package, and datasets produced by its
+generator, are derived from GeoNames (https://www.geonames.org/), which is
+made available under the Creative Commons Attribution 4.0 International
+licence (CC BY 4.0):
+
+    https://creativecommons.org/licenses/by/4.0/
+
+This licence covers the data only. The code in this repository is under a
+separate licence; see the LICENSE file. A user of this package takes on the
+obligations of both.
+
+CC BY 4.0 requires that attribution reaches the people who use an application
+built with this package, not only the readers of this repository. The package
+therefore exposes the required attribution text programmatically, through
+`ReverseGeocoder.attribution`, so that an application can display it, for
+example on a licences screen. Every dataset the generator produces carries
+that text with it.

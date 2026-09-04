@@ -1,0 +1,12 @@
+name: geonames_offline
+description: >-
+  Coordinates in, nearest populated place out, resolved offline against an
+  embedded GeoNames dataset. Pure Dart, no network at resolution time.
+version: 0.1.0-api
+
+environment:
+  sdk: ^3.8.0
+
+dev_dependencies:
+  lints: ^6.0.0
+  test: ^1.25.6
