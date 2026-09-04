@@ -1,0 +1,12 @@
+# GeoNames.org Country Information (fixture subset)
+#
+#ISO	ISO3	ISO-Numeric	fips	Country	Capital	Area(in sq km)	Population	Continent	tld	CurrencyCode	CurrencyName	Phone	Postal Code Format	Postal Code Regex	Languages	geonameid	neighbours	EquivalentFipsCode
+AR	ARG	032	AR	Argentina	Buenos Aires	2766890	44494502	SA	.ar	ARS	Peso	54	@####@@@	^([A-Z]\d{4}[A-Z]{3})$	es-AR,en,it,de,fr,gn	3865483	CL,BO,UY,PY,BR	
+CH	CHE	756	SZ	Switzerland	Bern	41290	8516543	EU	.ch	CHF	Franc	41	####	^(\d{4})$	de-CH,fr-CH,it-CH,rm	2658434	DE,IT,LI,FR,AT	
+GB	GBR	826	UK	United Kingdom	London	244820	66488991	EU	.uk	GBP	Pound	44	@# #@@	^([A-Za-z]\d{1,2}[A-Za-z]?)$	en-GB,cy-GB,gd	2635167	IE	
+NG	NGA	566	NI	Nigeria	Abuja	923768	195874740	AF	.ng	NGN	Naira	234	######	^(\d{6})$	en-NG,ha,yo,ig,ff	2328926	TD,NE,BJ,CM	
+NZ	NZL	554	NZ	New Zealand	Wellington	268680	4885500	OC	.nz	NZD	Dollar	64	####	^(\d{4})$	en-NZ,mi	2186224		
+SJ	SJM	744	SV	Svalbard and Jan Mayen	Longyearbyen	62049	2550	EU	.sj	NOK	Krone	47	####	^(\d{4})$	no,ru	607072		
+US	USA	840	US	United States	Washington	9629091	327167434	NA	.us	USD	Dollar	1	#####-####	^\d{5}(-\d{4})?$	en-US,es-US,haw,fr	6252001	CA,MX,CU	
+VA	VAT	336	VT	Vatican City	Vatican City	0.44	921	EU	.va	EUR	Euro	39	#####	^(\d{5})$	la,it,fr	3164670	IT	
+ZA	ZAF	710	SF	South Africa	Pretoria	1219912	57779622	AF	.za	ZAR	Rand	27	####	^(\d{4})$	zu,xh,af,nso,en-ZA,tn,st,ts,ss,ve,nr	953987	ZW,SZ,MZ,BW,NA,LS	

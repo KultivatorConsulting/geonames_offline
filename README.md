@@ -13,11 +13,11 @@ package no matter how much more accurate it would be.
 
 ## Status
 
-**API surface only.** Tag `v0.1.0-api` ships the `ReverseGeocoder` interface
-and its value types, `GeoPlace` and `NearestPlace`, so that a consumer can
-compile against the contract, and stub it, while the implementation is built.
-There is no resolver, no dataset and no generator yet, and nothing to
-instantiate.
+**Not yet usable for lookups.** Tag `v0.1.0-api` ships the `ReverseGeocoder`
+interface and its value types, `GeoPlace` and `NearestPlace`, so that a
+consumer can compile against the contract, and stub it, while the
+implementation is built. `main` also has the generator, the dataset format and
+the prebuilt `cities15000` dataset. The resolver that answers queries is next.
 
 ## The contract
 
@@ -76,15 +76,35 @@ dependencies:
 
 ## Datasets
 
-Two sizes are planned, both from the GeoNames exports:
+Two sizes, both from the GeoNames exports:
 
-| Dataset        | Rows  | Notes                                                        |
-| -------------- | ----- | ------------------------------------------------------------ |
-| `cities15000`  | ~25k  | Will ship prebuilt with the package. Population 15,000+.     |
-| `cities1000`   | ~130k | Built with the generator. Better rural accuracy, larger.     |
+| Dataset        | Rows  | Size    | Notes                                                    |
+| -------------- | ----- | ------- | -------------------------------------------------------- |
+| `cities15000`  | ~34k  | 1.1 MB  | Ships prebuilt at `lib/data/cities15000.gnof`. Population 15,000+. |
+| `cities1000`   | ~150k | ~5 MB   | Build it with the generator. Better rural accuracy.      |
 
-The generator will also accept a country filter, so a consumer shipping to one
-market pays for one market.
+The generator also accepts a country filter, so a consumer shipping to one
+market pays for one market: New Zealand and Australia together come to 13 KB.
+
+### Building your own dataset
+
+```sh
+tool/fetch_geonames.sh cities1000        # downloads to build/geonames/
+dart run geonames_offline:generate \
+  --cities build/geonames/cities1000.txt \
+  --admin1 build/geonames/admin1CodesASCII.txt \
+  --country-info build/geonames/countryInfo.txt \
+  --countries NZ,AU \
+  --output assets/places.gnof
+```
+
+The output is deterministic: the same export produces the same bytes, on any
+machine. Its `datasetVersion` is derived from the export's content, for
+example `cities1000 AU,NZ 2026-08-30 (2140 places)`, and the CC BY attribution
+is stamped into it. [FORMAT.md](FORMAT.md) specifies the layout.
+
+A dataset you built yourself does not change when you upgrade the package.
+Its refresh path is running the generator again.
 
 ## Non-goals
 

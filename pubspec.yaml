@@ -2,7 +2,7 @@ name: geonames_offline
 description: >-
   Coordinates in, nearest populated place out, resolved offline against an
   embedded GeoNames dataset. Pure Dart, no network at resolution time.
-version: 0.1.0-api
+version: 0.1.0-dev
 repository: https://github.com/KultivatorConsulting/geonames_offline
 
 environment:

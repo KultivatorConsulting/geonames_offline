@@ -130,8 +130,27 @@ makes a package that should be trivially portable into one with a build matrix.
 Neither is worth it for a dataset that is a few tens of thousands of rows and
 fits comfortably in memory.
 
-Format decisions — record layout, string interning, whether the index is built at
-load time or serialised — are open. See PLAN.md.
+### Decided: the record order is the index
+
+FORMAT.md is the specification. The points that were open:
+
+- **Coordinates are 32-bit integers in 10⁻⁷ degrees.** GeoNames publishes at
+  most five decimals, so this is lossless, and it keeps floating-point
+  formatting out of the asset.
+- **Strings are interned** in one sorted table; countries and first-order
+  divisions are small tables that records point into.
+- **The index is neither built at load time nor serialised separately.** The
+  generator writes records in implicit k-d tree order over their unit vectors
+  on the sphere, so loading is a straight decode and querying walks the array.
+  Working in three dimensions is what makes the antimeridian and the poles
+  ordinary cases rather than special ones.
+- **Trigonometry is the package's own**, not the C library's, so the order is
+  bit-identical on every machine. Reproducibility is measured by generating
+  twice and comparing, and it holds byte for byte.
+
+Measured on the 2026-09-03 export: 34,135 places encode to 1.11 MB (0.71 MB
+gzipped), generation takes under a second, and decoding takes about 5 ms
+ahead-of-time compiled or 25 ms on a cold JIT.
 
 ## Datasets
 
@@ -139,7 +158,7 @@ Two sizes, from the GeoNames exports:
 
 | Dataset | Rows | Notes |
 |---|---|---|
-| `cities15000` | ~25k | Ships prebuilt. Population 15,000+. |
+| `cities15000` | ~34k | Ships prebuilt. Population 15,000+. |
 | `cities1000` | ~130k | Built via the generator. Better rural accuracy, larger asset. |
 
 A **generator** turns a GeoNames export into the package's binary format, and

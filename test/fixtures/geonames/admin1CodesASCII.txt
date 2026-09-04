@@ -1,0 +1,9 @@
+NZ.G2	Wellington	Wellington	2179537
+NZ.E7	Auckland	Auckland	2193734
+NZ.CIT	Chatham Islands	Chatham Islands	7626470
+ZA.11	Western Cape	Western Cape	1085599
+US.KS	Kansas	Kansas	4273857
+GB.ENG	England	England	6269131
+CH.ZH	Zürich	Zurich	2657895
+SJ.21	Svalbard	Svalbard	607072
+AR.23	Tierra del Fuego	Tierra del Fuego	3834447

@@ -1,0 +1,11 @@
+2179537	Wellington	Wellington	Wellington,Веллингтон	-41.28664	174.77557	P	PPLC	NZ		G2	047			412500		0	Pacific/Auckland	2025-06-10
+2193733	Auckland	Auckland	Auckland,Tāmaki Makaurau	-36.84853	174.76349	P	PPLA	NZ		E7	076			417910		25	Pacific/Auckland	2025-01-02
+90000001	Wellington	Wellington		-33.63981	19.00867	P	PPL	ZA		11				55543		101	Africa/Johannesburg	2024-11-20
+90000002	Wellington	Wellington		37.26445	-97.37171	P	PPLA2	US		KS	191			8172		375	America/Chicago	2024-03-03
+90000003	Wellington	Wellington		50.97556	-3.22412	P	PPL	GB		ENG	SOM			14500		75	Europe/London	2023-08-08
+90000004	Waitangi	Waitangi		-43.95353	-176.55973	P	PPLA	NZ		CIT				280		10	Pacific/Chatham	2024-01-09
+2657896	Zürich	Zurich	Zurich,Zürich	47.36667	8.55	P	PPLA	CH		ZH	112	261	261	402762		408	Europe/Zurich	2025-02-14
+90000005	Longyearbyen	Longyearbyen		78.22334	15.64689	P	PPLC	SJ		21				2060		20	Arctic/Longyearbyen	2022-05-05
+90000006	Ushuaia	Ushuaia		-54.81084	-68.31591	P	PPLA2	AR		23				58028		20	America/Argentina/Ushuaia	2024-07-07
+90000007	Nowhere	Nowhere		10.0	10.0	P	PPL	NG		00				16000		300	Africa/Lagos	2021-01-01
+6691831	Vatican City	Vatican City	Città del Vaticano	41.90268	12.45414	P	PPLC	VA						825		61	Europe/Vatican	2023-12-01

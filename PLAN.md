@@ -87,10 +87,14 @@ picking silently.
    country and admin1 names, and whether the spatial index is built at load time
    or serialised into the asset. Load-time construction over ~25k rows is likely
    fast enough to make serialising it a premature optimisation, but measure
-   rather than assume. Needed in slice 2.
+   rather than assume. Needed in slice 2. *(Decided 2026-09-05: see FORMAT.md.
+   Record order is the index, so nothing is built at load and nothing extra is
+   serialised; decoding 34k places takes ~5 ms AOT.)*
 4. **Default dataset shipped in the package** — `cities15000` worldwide is the
    assumption. Confirm the resulting package size is acceptable to pub.dev and to
-   app binaries before committing the asset. Needed in slice 2.
+   app binaries before committing the asset. Needed in slice 2. *(Decided
+   2026-09-05: confirmed. 34,135 places are 1.11 MB uncompressed, 0.71 MB
+   gzipped, against pub.dev's 100 MB archive limit.)*
 5. **Regeneration cadence** — GeoNames publishes daily. Monthly is likely
    sufficient, since each release costs every consumer an upgrade decision.
    Needed in slice 5.
