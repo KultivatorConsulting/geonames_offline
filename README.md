@@ -70,7 +70,7 @@ from git, pinned to the tag:
 dependencies:
   geonames_offline:
     git:
-      url: <this repository's clone URL>
+      url: https://github.com/KultivatorConsulting/geonames_offline.git
       ref: v0.1.0-api
 ```
 

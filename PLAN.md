@@ -81,7 +81,8 @@ picking silently.
    the Dart ecosystem and the least friction for adopters; Apache-2.0 adds an
    explicit patent grant. Needed in slice 1. *(Decided 2026-09-05: MIT.)*
 2. **Where the repository lives** — a personal GitHub account or an
-   organisation. Needed in slice 1.
+   organisation. Needed in slice 1. *(Decided 2026-09-05:
+   github.com/KultivatorConsulting/geonames_offline.)*
 3. **Binary format specifics** — record layout, string interning for repeated
    country and admin1 names, and whether the spatial index is built at load time
    or serialised into the asset. Load-time construction over ~25k rows is likely
