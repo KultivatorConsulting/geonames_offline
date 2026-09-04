@@ -224,12 +224,16 @@ discharge that obligation for an app store binary. Therefore:
 - **Street addresses.** The dataset holds populated places and administrative
   divisions. It cannot resolve an address and the package must never imply it
   can — this is why it is not called `reverse_geocoder`.
-- **Sub-city granularity.** Suburbs and neighbourhoods are not in these
-  datasets. GeoNames' exports do carry populous *sections* of cities (feature
-  code `PPLX`: Kowloon, Puxi, the Paris arrondissements), and the generator
-  drops those by default, with historical, abandoned and destroyed places,
-  because "nearest place" should name the place and not a part of it. A
-  consumer who wants them builds a dataset with `--exclude-feature-codes none`.
+- **Sub-city granularity.** Suburbs and neighbourhoods are not a target. But
+  GeoNames' exports include sections of large cities as populated places in
+  their own right, and code them inconsistently: Kowloon and Puxi are `PPLX`,
+  the Paris arrondissements are ordinary `PPL` rows, Marseille's are `PPLA5`.
+  The generator drops what GeoNames explicitly codes as a section (`PPLX`),
+  plus historical, abandoned and destroyed places, and returns the rest
+  verbatim: a heuristic guessing which `PPL` rows are "really" districts would
+  be policy dressed as data. So central Paris resolves to an arrondissement,
+  and that is GeoNames' view of Paris. A consumer who wants the *enclosing*
+  city needs polygons, which is a different package.
 - **Timezone from coordinates.** Adjacent and tempting, a different dataset with
   a different licence. If it is ever wanted it is a separate package.
 - **Acquiring coordinates.** The caller supplies them. This package never asks

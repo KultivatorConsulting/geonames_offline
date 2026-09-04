@@ -57,11 +57,12 @@ Map<String, String> parseAdmin1Codes(String tsv) {
   return names;
 }
 
-/// Feature codes the generator drops unless told otherwise: sections of a
-/// populated place (boroughs, arrondissements, districts), and places that
-/// are historical, abandoned or destroyed. GeoNames' city exports include
-/// populous sections, and "nearest place" should name the place, not a part
-/// of it; sub-city granularity is a documented non-goal.
+/// Feature codes the generator drops unless told otherwise: what GeoNames
+/// explicitly codes as a section of a populated place (`PPLX`: Kowloon,
+/// Puxi), and places that are historical, abandoned or destroyed. Sub-city
+/// granularity is a documented non-goal, but GeoNames also codes many
+/// sections as ordinary `PPL` rows (the Paris arrondissements), and those are
+/// kept verbatim rather than guessed at.
 const Set<String> defaultExcludedFeatureCodes = {
   'PPLX',
   'PPLH',

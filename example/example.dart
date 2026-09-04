@@ -8,7 +8,7 @@ void main() {
 
   const queries = [
     (-41.29, 174.78), // Wellington, New Zealand
-    (48.86, 2.35), // Paris
+    (48.86, 2.35), // central Paris: GeoNames lists arrondissements as places
     (-25.0, 135.0), // the middle of Australia: nothing close, still answered
     (-43.9, 179.9), // just west of the antimeridian
   ];

@@ -19,9 +19,9 @@ Usage: dart run geonames_offline:generate [options]
                            (at least one of --output and --dart is required)
   --countries NZ,AU        keep only these ISO 3166-1 alpha-2 countries
   --exclude-feature-codes  GeoNames feature codes to drop; default
-                           PPLX,PPLH,PPLQ,PPLW (sections of a place, and
-                           historical, abandoned or destroyed places).
-                           Pass "none" to keep everything.
+                           PPLX,PPLH,PPLQ,PPLW (what GeoNames codes as a
+                           section of a place, and historical, abandoned or
+                           destroyed places). Pass "none" to keep everything.
   --dataset-version <s>    override the derived dataset version string
   --help                   show this text
 

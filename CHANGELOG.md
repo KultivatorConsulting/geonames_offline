@@ -17,8 +17,8 @@ The first working release.
 - The generator, `dart run geonames_offline:generate`, which turns a GeoNames
   export into a dataset deterministically, with an optional country filter,
   a content-derived dataset version and the CC BY attribution stamped in.
-  Sections of cities and historical, abandoned or destroyed places are
-  excluded by default (`--exclude-feature-codes`).
+  Rows GeoNames codes as a section of a place (`PPLX`), or as historical,
+  abandoned or destroyed, are excluded by default (`--exclude-feature-codes`).
 - The binary dataset format, specified in FORMAT.md. Records are stored in
   spatial index order, so there is no index to build at load time.
 - The prebuilt `cities15000` dataset at `lib/data/cities15000.gnof`.

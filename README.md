@@ -145,11 +145,15 @@ change before taking it.
 - Street addresses. The datasets hold populated places and administrative
   divisions; the package cannot resolve an address and will never imply that
   it can.
-- Sub-city granularity. GeoNames' exports do include populous sections of
-  cities (boroughs, arrondissements, districts; feature code `PPLX`), and the
-  generator drops them by default, along with historical, abandoned and
-  destroyed places, so that the answer is the place rather than a part of it.
-  `--exclude-feature-codes` changes that for a dataset you build.
+- Sub-city granularity, and yet: the answer is the nearest place GeoNames
+  lists, which is not always the city. GeoNames' exports include sections of
+  large cities as places of their own, coded inconsistently, so central Paris
+  resolves to an arrondissement. The generator drops what GeoNames explicitly
+  codes as a section (feature code `PPLX`), and historical, abandoned or
+  destroyed places, but sections coded as ordinary populated places stay,
+  verbatim. `--exclude-feature-codes` changes the default set for a dataset
+  you build. Finding the *enclosing* city needs polygons, which this package
+  does not have.
 - Timezone from coordinates. A different dataset with a different licence.
 - Acquiring coordinates. The caller supplies them; this package never asks for
   a location permission.
