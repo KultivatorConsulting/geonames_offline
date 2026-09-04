@@ -11,3 +11,4 @@
 6691831	Vatican City	Vatican City	Città del Vaticano	41.90268	12.45414	P	PPLC	VA						825		61	Europe/Vatican	2023-12-01
 90000008	Twin West	Twin West		0.0	-1.0	P	PPL	NG		00				20000		5	Africa/Lagos	2020-01-01
 90000009	Twin East	Twin East		0.0	1.0	P	PPL	NG		00				20000		5	Africa/Lagos	2020-01-01
+90000010	Wellington Central	Wellington Central		-41.2889	174.7772	P	PPLX	NZ		G2	047			20000		10	Pacific/Auckland	2020-01-01

@@ -20,7 +20,7 @@ jobs:
         # of the SDK constraint in pubspec.yaml, kept honest by running here.
         sdk: [stable, 3.8.0]
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v7
       - uses: dart-lang/setup-dart@v1
         with:
           sdk: ${{ matrix.sdk }}

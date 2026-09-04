@@ -93,8 +93,9 @@ picking silently.
 4. **Default dataset shipped in the package** — `cities15000` worldwide is the
    assumption. Confirm the resulting package size is acceptable to pub.dev and to
    app binaries before committing the asset. Needed in slice 2. *(Decided
-   2026-09-05: confirmed. 34,135 places are 1.11 MB uncompressed, 0.71 MB
+   2026-09-05: confirmed. 31,722 places are 1.0 MB uncompressed, 0.66 MB
    gzipped, against pub.dev's 100 MB archive limit.)*
 5. **Regeneration cadence** — GeoNames publishes daily. Monthly is likely
    sufficient, since each release costs every consumer an upgrade decision.
-   Needed in slice 5.
+   Needed in slice 5. *(Decided 2026-09-05: monthly, on the 1st, plus manual
+   dispatch. `.github/workflows/regenerate.yml`.)*

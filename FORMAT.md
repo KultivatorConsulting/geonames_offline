@@ -81,7 +81,7 @@ the invariant it relies on holds exactly.
 The generator derives the version string from the content, never from the
 clock: the export name, the country filter if any, the latest `modification
 date` among the kept rows, and the row count. For example
-`cities15000 2026-09-03 (34135 places)` or `cities1000 AU,NZ 2026-08-30 (2140
+`cities15000 2026-09-03 (31722 places)` or `cities1000 AU,NZ 2026-08-30 (2140
 places)`. It can be overridden on the command line.
 
 ## Compatibility

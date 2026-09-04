@@ -12,9 +12,13 @@ The first working release.
   rural points, exact ties, the antimeridian, the poles, open ocean, retired
   identifiers, the empty dataset and invalid coordinates, all asserting on
   `geonameId` against a purpose-built fixture.
+- Monthly automated regeneration of the bundled dataset, which opens a pull
+  request only when the full suite passes against the new data.
 - The generator, `dart run geonames_offline:generate`, which turns a GeoNames
   export into a dataset deterministically, with an optional country filter,
   a content-derived dataset version and the CC BY attribution stamped in.
+  Sections of cities and historical, abandoned or destroyed places are
+  excluded by default (`--exclude-feature-codes`).
 - The binary dataset format, specified in FORMAT.md. Records are stored in
   spatial index order, so there is no index to build at load time.
 - The prebuilt `cities15000` dataset at `lib/data/cities15000.gnof`.

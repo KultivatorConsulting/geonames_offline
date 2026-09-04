@@ -114,6 +114,25 @@ void main() {
     expect(decodeDataset(_generate(countries: {'XX'}).bytes).length, 0);
   });
 
+  test('sections of a place are dropped by default and can be kept', () {
+    final byDefault = decodeDataset(_generate().bytes);
+    expect(byDefault.geonameIds, isNot(contains(90000010)));
+    expect(byDefault.length, 13);
+
+    final kept = decodeDataset(
+      generateDataset(
+        citiesTsv: _cities,
+        admin1CodesTsv: _admin1,
+        countryInfoTsv: _countryInfo,
+        sourceName: 'cities_fixture',
+        excludeFeatureCodes: const {},
+      ).bytes,
+    );
+    expect(kept.geonameIds, contains(90000010));
+    expect(kept.length, 14);
+    expect(kept.datasetVersion, 'cities_fixture 2025-06-10 (14 places)');
+  });
+
   test('the attribution is stamped into the dataset', () {
     final d = decodeDataset(
       generateDataset(
@@ -138,25 +157,11 @@ void main() {
       ).bytes,
     );
     expect(spatialOrderViolations(d), 0);
+    final inputOrder = parseCities(_cities).records.map((r) => r.geonameId);
+    expect(inputOrder, hasLength(d.length));
     expect(
       d.geonameIds,
-      isNot(
-        orderedEquals([
-          2179537,
-          2193733,
-          90000001,
-          90000002,
-          90000003,
-          90000004,
-          2657896,
-          90000005,
-          90000006,
-          90000007,
-          6691831,
-          90000008,
-          90000009,
-        ]),
-      ),
+      isNot(orderedEquals(inputOrder)),
       reason: 'input order is not spatial order, so ordering must have run',
     );
   });
@@ -169,7 +174,7 @@ void main() {
         isA<FormatException>().having(
           (e) => e.message,
           'message',
-          contains('line 14'),
+          contains('line 15'),
         ),
       ),
     );

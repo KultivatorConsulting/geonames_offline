@@ -98,7 +98,7 @@ Two sizes, both from the GeoNames exports:
 
 | Dataset        | Rows  | Size    | Notes                                                    |
 | -------------- | ----- | ------- | -------------------------------------------------------- |
-| `cities15000`  | ~34k  | 1.1 MB  | Bundled; `GeonamesReverseGeocoder.cities15000()`. Population 15,000+. |
+| `cities15000`  | ~32k  | 1.0 MB  | Bundled; `GeonamesReverseGeocoder.cities15000()`. Population 15,000+. |
 | `cities1000`   | ~150k | ~5 MB   | Build it with the generator. Better rural accuracy.      |
 
 The generator also accepts a country filter, so a consumer shipping to one
@@ -131,13 +131,25 @@ is stamped into it. [FORMAT.md](FORMAT.md) specifies the layout.
 A dataset you built yourself does not change when you upgrade the package.
 Its refresh path is running the generator again.
 
+### How the bundled dataset stays current
+
+A monthly workflow pulls the current GeoNames export, regenerates the bundled
+dataset, runs the full test suite against it, and opens a pull request only
+if everything passed and the data changed. A release that merges one changes
+`datasetVersion` and nothing else, so you can tell a data update from a code
+change before taking it.
+
 ## Non-goals
 
 - Forward geocoding (name to coordinates).
 - Street addresses. The datasets hold populated places and administrative
   divisions; the package cannot resolve an address and will never imply that
   it can.
-- Sub-city granularity. Suburbs and neighbourhoods are not in these datasets.
+- Sub-city granularity. GeoNames' exports do include populous sections of
+  cities (boroughs, arrondissements, districts; feature code `PPLX`), and the
+  generator drops them by default, along with historical, abandoned and
+  destroyed places, so that the answer is the place rather than a part of it.
+  `--exclude-feature-codes` changes that for a dataset you build.
 - Timezone from coordinates. A different dataset with a different licence.
 - Acquiring coordinates. The caller supplies them; this package never asks for
   a location permission.

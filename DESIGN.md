@@ -150,7 +150,7 @@ FORMAT.md is the specification. The points that were open:
   bit-identical on every machine. Reproducibility is measured by generating
   twice and comparing, and it holds byte for byte.
 
-Measured on the 2026-09-03 export: 34,135 places encode to 1.11 MB (0.71 MB
+Measured on the 2026-09-03 export: 31,722 places encode to 1.0 MB (0.66 MB
 gzipped), generation takes under a second, and decoding takes about 5 ms
 ahead-of-time compiled or 25 ms on a cold JIT.
 
@@ -181,7 +181,7 @@ Two sizes, from the GeoNames exports:
 
 | Dataset | Rows | Notes |
 |---|---|---|
-| `cities15000` | ~34k | Ships prebuilt. Population 15,000+. |
+| `cities15000` | ~32k | Ships prebuilt. Population 15,000+, sections of cities excluded. |
 | `cities1000` | ~130k | Built via the generator. Better rural accuracy, larger asset. |
 
 A **generator** turns a GeoNames export into the package's binary format, and
@@ -224,7 +224,12 @@ discharge that obligation for an app store binary. Therefore:
 - **Street addresses.** The dataset holds populated places and administrative
   divisions. It cannot resolve an address and the package must never imply it
   can — this is why it is not called `reverse_geocoder`.
-- **Sub-city granularity.** Suburbs and neighbourhoods are not in these datasets.
+- **Sub-city granularity.** Suburbs and neighbourhoods are not in these
+  datasets. GeoNames' exports do carry populous *sections* of cities (feature
+  code `PPLX`: Kowloon, Puxi, the Paris arrondissements), and the generator
+  drops those by default, with historical, abandoned and destroyed places,
+  because "nearest place" should name the place and not a part of it. A
+  consumer who wants them builds a dataset with `--exclude-feature-codes none`.
 - **Timezone from coordinates.** Adjacent and tempting, a different dataset with
   a different licence. If it is ever wanted it is a separate package.
 - **Acquiring coordinates.** The caller supplies them. This package never asks

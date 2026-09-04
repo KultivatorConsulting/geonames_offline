@@ -51,13 +51,31 @@ void main() {
       expect(wellingtons.map((p) => p.geonameId).toSet(), hasLength(4));
     });
 
-    // What would have to break: resolution by position, or identity.
+    // What would have to break: resolution by position, or identity, or the
+    // default exclusion of city sections: the fixture's "Wellington Central"
+    // (PPLX) is closer to the first query than Wellington is.
     test('each resolves by position to its own id', () {
       expect(g.nearest(-41.29, 174.78)!.place.geonameId, 2179537); // NZ
       expect(g.nearest(-33.64, 19.01)!.place.geonameId, 90000001); // ZA
       expect(g.nearest(37.26, -97.37)!.place.geonameId, 90000002); // US
       expect(g.nearest(50.98, -3.22)!.place.geonameId, 90000003); // GB
     });
+  });
+
+  // What would have to break: the generator's default exclusion of sections
+  // of a place, which the non-goal "no sub-city granularity" depends on.
+  test('a section of a city is not in the dataset unless asked for', () {
+    expect(g.byId(90000010), isNull);
+    final withSections = GeonamesReverseGeocoder.fromBytes(
+      generateDataset(
+        citiesTsv: _cities,
+        admin1CodesTsv: _admin1,
+        countryInfoTsv: _countryInfo,
+        sourceName: 'cities_fixture',
+        excludeFeatureCodes: const {},
+      ).bytes,
+    );
+    expect(withSections.nearest(-41.29, 174.78)!.place.geonameId, 90000010);
   });
 
   // What would have to break: a radius policy creeping in, or the distance

@@ -18,6 +18,10 @@ Usage: dart run geonames_offline:generate [options]
   --dart <file>            where to write a Dart library embedding the dataset
                            (at least one of --output and --dart is required)
   --countries NZ,AU        keep only these ISO 3166-1 alpha-2 countries
+  --exclude-feature-codes  GeoNames feature codes to drop; default
+                           PPLX,PPLH,PPLQ,PPLW (sections of a place, and
+                           historical, abandoned or destroyed places).
+                           Pass "none" to keep everything.
   --dataset-version <s>    override the derived dataset version string
   --help                   show this text
 
@@ -63,6 +67,12 @@ void main(List<String> args) {
       .map((c) => c.trim())
       .where((c) => c.isNotEmpty)
       .toSet();
+  final excluded = switch (options['exclude-feature-codes']) {
+    null => defaultExcludedFeatureCodes,
+    'none' || '' => const <String>{},
+    final codes =>
+      codes.split(',').map((c) => c.trim()).where((c) => c.isNotEmpty).toSet(),
+  };
   try {
     final result = generateDataset(
       citiesTsv: File(citiesPath).readAsStringSync(),
@@ -70,6 +80,7 @@ void main(List<String> args) {
       countryInfoTsv: File(options['country-info']!).readAsStringSync(),
       sourceName: _basenameWithoutExtension(citiesPath),
       countries: countries,
+      excludeFeatureCodes: excluded,
       datasetVersion: options['dataset-version'],
     );
     final summary =
@@ -109,6 +120,7 @@ const _known = {
   'output',
   'dart',
   'countries',
+  'exclude-feature-codes',
   'dataset-version',
 };
 

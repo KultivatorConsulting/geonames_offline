@@ -57,14 +57,28 @@ Map<String, String> parseAdmin1Codes(String tsv) {
   return names;
 }
 
+/// Feature codes the generator drops unless told otherwise: sections of a
+/// populated place (boroughs, arrondissements, districts), and places that
+/// are historical, abandoned or destroyed. GeoNames' city exports include
+/// populous sections, and "nearest place" should name the place, not a part
+/// of it; sub-city granularity is a documented non-goal.
+const Set<String> defaultExcludedFeatureCodes = {
+  'PPLX',
+  'PPLH',
+  'PPLQ',
+  'PPLW',
+};
+
 /// Parses a GeoNames places export such as `cities15000.txt`.
 ///
-/// Keeps only rows whose country code is in [countries], if given. Also
-/// reports the latest `modification date` among the kept rows, which
+/// Keeps only rows whose country code is in [countries], if given, and drops
+/// rows whose feature code is in [excludeFeatureCodes]. Also reports the
+/// latest `modification date` among the kept rows, which
 /// [deriveDatasetVersion] uses.
 ({List<PlaceRecord> records, String? latestModification}) parseCities(
   String tsv, {
   Set<String>? countries,
+  Set<String> excludeFeatureCodes = defaultExcludedFeatureCodes,
 }) {
   final records = <PlaceRecord>[];
   final seen = <int>{};
@@ -82,6 +96,7 @@ Map<String, String> parseAdmin1Codes(String tsv) {
     }
     final countryCode = cols[8];
     if (countries != null && !countries.contains(countryCode)) continue;
+    if (excludeFeatureCodes.contains(cols[7])) continue;
     final id = int.tryParse(cols[0]);
     if (id == null) {
       throw FormatException('cities line $lineNo: bad geonameid "${cols[0]}"');
@@ -157,7 +172,7 @@ List<int> spatialOrder(List<PlaceRecord> records) {
 
 /// The dataset version string for a generated dataset, derived from the
 /// content rather than the clock so that regeneration is reproducible:
-/// `cities15000 2026-09-03 (34135 places)`, with the country filter inserted
+/// `cities15000 2026-09-03 (31722 places)`, with the country filter inserted
 /// after the source name when there is one.
 String deriveDatasetVersion({
   required String sourceName,
@@ -178,7 +193,9 @@ String deriveDatasetVersion({
 ///
 /// [sourceName] names the export in the dataset version, e.g. `cities15000`.
 /// [countries] restricts the dataset to those ISO 3166-1 alpha-2 codes; case
-/// is normalised. [datasetVersion] overrides the derived version string.
+/// is normalised. [excludeFeatureCodes] drops rows by GeoNames feature code
+/// and defaults to [defaultExcludedFeatureCodes]. [datasetVersion] overrides
+/// the derived version string.
 ///
 /// Throws [FormatException] for malformed input, and for a country code that
 /// `countryInfo.txt` does not know, because a place without a country name
@@ -189,12 +206,19 @@ String deriveDatasetVersion({
   required String countryInfoTsv,
   required String sourceName,
   Set<String>? countries,
+  Set<String> excludeFeatureCodes = defaultExcludedFeatureCodes,
   String? datasetVersion,
 }) {
   final countryNames = parseCountryInfo(countryInfoTsv);
   final admin1Names = parseAdmin1Codes(admin1CodesTsv);
   final filter = countries?.map((c) => c.toUpperCase()).toSet();
-  final parsed = parseCities(citiesTsv, countries: filter);
+  final parsed = parseCities(
+    citiesTsv,
+    countries: filter,
+    excludeFeatureCodes: excludeFeatureCodes
+        .map((c) => c.toUpperCase())
+        .toSet(),
+  );
   for (final r in parsed.records) {
     if (!countryNames.containsKey(r.countryCode)) {
       throw FormatException(

@@ -4,6 +4,12 @@ description: >-
   embedded GeoNames dataset. Pure Dart, no network at resolution time.
 version: 0.1.0
 repository: https://github.com/KultivatorConsulting/geonames_offline
+topics:
+  - geocoding
+  - reverse-geocoding
+  - geonames
+  - offline
+  - geolocation
 
 environment:
   sdk: ^3.8.0

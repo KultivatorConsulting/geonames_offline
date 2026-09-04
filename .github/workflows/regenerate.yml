@@ -1,0 +1,80 @@
+name: Regenerate dataset
+
+# Pulls the current GeoNames export, regenerates the bundled dataset, runs the
+# full suite against it, and opens a pull request only if everything passed
+# and the data actually changed. The gate is the point: an automated data bump
+# without the corpus behind it is an automated regression with a green tick.
+#
+# Requires "Allow GitHub Actions to create and approve pull requests" in the
+# repository's Actions settings.
+
+on:
+  schedule:
+    - cron: '17 3 1 * *' # monthly, the 1st at 03:17 UTC
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  regenerate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: dart-lang/setup-dart@v1
+        with:
+          sdk: stable
+      - run: dart pub get
+
+      - name: Fetch the current GeoNames export
+        run: tool/fetch_geonames.sh cities15000
+
+      - name: Regenerate the bundled dataset
+        run: |
+          dart run bin/generate.dart \
+            --cities build/geonames/cities15000.txt \
+            --admin1 build/geonames/admin1CodesASCII.txt \
+            --country-info build/geonames/countryInfo.txt \
+            --dart lib/src/data/cities15000.dart | tee build/generate.log
+
+      - name: Run the full suite against the new dataset
+        run: dart test --platform vm
+
+      - name: Describe the change
+        id: describe
+        run: |
+          if git diff --quiet -- lib/src/data/cities15000.dart; then
+            echo "changed=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "changed=true" >> "$GITHUB_OUTPUT"
+          fi
+          version=$(sed -n 's/.*version "\(.*\)"$/\1/p' build/generate.log | head -1)
+          echo "version=$version" >> "$GITHUB_OUTPUT"
+          echo "Dataset version: $version (changed: $(git diff --quiet -- lib/src/data/cities15000.dart && echo no || echo yes))"
+
+      - name: Open a pull request
+        if: steps.describe.outputs.changed == 'true'
+        uses: peter-evans/create-pull-request@v8
+        with:
+          branch: regenerate/cities15000
+          delete-branch: true
+          title: 'Regenerate cities15000: ${{ steps.describe.outputs.version }}'
+          commit-message: |
+            Regenerate cities15000: ${{ steps.describe.outputs.version }}
+
+            Automated regeneration from the current GeoNames export. The full
+            test suite, including the adversarial corpus and the smoke tests
+            against this dataset, passed before this pull request was opened.
+          body: |
+            Automated regeneration from the current GeoNames export.
+
+            **Dataset version:** `${{ steps.describe.outputs.version }}`
+
+            The full test suite, including the adversarial corpus and the smoke
+            tests against this dataset, passed in the run that opened this pull
+            request: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+
+            Pull requests opened by a workflow do not trigger CI on their own;
+            that run is the evidence. Merging this changes `datasetVersion` and
+            nothing else.
