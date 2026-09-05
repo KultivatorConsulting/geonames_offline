@@ -78,19 +78,15 @@ The design choices behind the shape, and the reasoning for each, are in
 
 ## Installing
 
-Until the package is published to pub.dev, depend on this repository directly
-from git, pinned to a tag:
-
 ```yaml
 dependencies:
-  geonames_offline:
-    git:
-      url: https://github.com/KultivatorConsulting/geonames_offline.git
-      ref: v0.1.0
+  geonames_offline: ^0.1.0
 ```
 
-Tag `v0.1.0-api` is the interface alone, with no implementation, for
-consumers who need to compile against the contract before adopting the data.
+The package is on [pub.dev](https://pub.dev/packages/geonames_offline).
+Releases are tagged here as `v<version>`; tag `v0.1.0-api` is the interface
+alone, with no implementation, for consumers who need to compile against the
+contract before adopting the data.
 
 ## Datasets
 
